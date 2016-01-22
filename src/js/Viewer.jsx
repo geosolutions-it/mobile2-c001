@@ -12,6 +12,7 @@ var {connect} = require('react-redux');
 var {bindActionCreators} = require('redux');
 
 var ConfigUtils = require('../../MapStore2/web/client/utils/ConfigUtils');
+const MapInfoUtils = require('../../MapStore2/web/client/utils/MapInfoUtils');
 
 var {loadLocale} = require('../../MapStore2/web/client/actions/locale');
 
@@ -25,7 +26,7 @@ var VMap = require('../../MapStore2/web/client/examples/viewer/components/Map');
 
 var Localized = require('../../MapStore2/web/client/components/I18N/Localized');
 
-var Viewer = React.createClass({
+const Viewer = React.createClass({
     propTypes: {
         map: ConfigUtils.PropTypes.config,
         mapParams: React.PropTypes.object,
@@ -66,6 +67,47 @@ var Viewer = React.createClass({
         changeLocateState: React.PropTypes.func,
         onLocateError: React.PropTypes.func
     },
+    renderViewer() {
+        if (this.props.messages) {
+            let plugins = this.props.plugins(this.props);
+            if (this.props.configPlugins) {
+                let mapPlugins = this.props.configPlugins.map((plugin) => {
+                    let props = assign({}, plugin);
+                    delete props.type;
+                    for (let propName in props) {
+                        if (props.hasOwnProperty(propName)) {
+                            let value = props[propName];
+                            if (value.indexOf("${") === 0) {
+                                value = value.substring(2, value.length - 1);
+                                value = this.props[value];
+                            }
+                        }
+                    }
+                    return React.createElement(require('../../MapStore2/web/client/examples/viewer/components/' + plugin.type), props);
+                });
+                plugins = plugins.concat(mapPlugins);
+            }
+            let layers = this.props.mapInfo.showMarker ?
+                [...this.props.layers.flat, MapInfoUtils.getMarkerLayer("GetFeatureInfo", this.props.mapInfo.clickPoint.latlng)] :
+                [...this.props.layers.flat];
+            return (
+                <div key="viewer" className="fill">
+                    <VMap key="map" config={this.props.map} layers={layers} onMapViewChanges={this.manageNewMapView}
+                        onClick={this.props.clickOnMap} onMouseMove={this.manageMousePosition}
+                        onLayerLoading={this.props.layerLoading} onLayerLoad={this.props.layerLoad}
+                        measurement={this.props.measurement}
+                        changeMeasurementState={this.props.changeMeasurementState}
+                        locate={this.props.locate} locateMessages={this.props.messages.locate}
+                        mapOptions={this.props.mapOptions}
+                        changeLocateState={this.props.changeLocateState}
+                        onLocateError={this.props.onLocateError}
+                        {...this.props.mapParams} />
+                {plugins}
+                </div>
+            );
+        }
+        return null;
+    },
     render() {
         if (this.props.map) {
             let config = this.props.map;
@@ -75,50 +117,14 @@ var Viewer = React.createClass({
 
             return (
                 <Localized messages={this.props.messages} locale={this.props.locale} loadingError={this.props.localeError}>
-                    {() => {
-                        let plugins = this.props.plugins(this.props);
-                        if (this.props.configPlugins) {
-                            let mapPlugins = this.props.configPlugins.map((plugin) => {
-                                let props = assign({}, plugin);
-                                delete props.type;
-                                for (let propName in props) {
-                                    if (props.hasOwnProperty(propName)) {
-                                        let value = props[propName];
-                                        if (value.indexOf("${") === 0) {
-                                            value = value.substring(2, value.length - 1);
-                                            value = this.props[value];
-                                        }
-                                    }
-                                }
-                                return React.createElement(require('../../MapStore2/web/client/examples/viewer/components/' + plugin.type), props);
-                            });
-                            plugins = plugins.concat(mapPlugins);
-                        }
-                        return (
-                            <div key="viewer" className="fill">
-                                <VMap key="map" config={this.props.map} layers={this.props.layers.flat} onMapViewChanges={this.manageNewMapView}
-                                    onClick={this.props.clickOnMap} onMouseMove={this.manageMousePosition}
-                                    onLayerLoading={this.props.layerLoading} onLayerLoad={this.props.layerLoad}
-                                    measurement={this.props.measurement}
-                                    changeMeasurementState={this.props.changeMeasurementState}
-                                    locate={this.props.locate} locateMessages={this.props.messages.locate}
-                                    mapOptions={this.props.mapOptions}
-                                    changeLocateState={this.props.changeLocateState}
-                                    onLocateError={this.props.onLocateError}
-                                    {...this.props.mapParams} />
-                            {plugins}
-                            </div>
-                        );
-                    }
-
-                    }
+                    {this.renderViewer()}
                 </Localized>
             );
         }
         return null;
     },
-    manageNewMapView(center, zoom, bbox, size, mapStateSource) {
-        this.props.changeMapView(center, zoom, bbox, size, mapStateSource);
+    manageNewMapView(center, zoom, bbox, size, mapStateSource, projection) {
+        this.props.changeMapView(center, zoom, bbox, size, mapStateSource, projection);
     },
     manageMousePosition(position) {
         if (this.props.mousePositionEnabled) {
@@ -132,7 +138,7 @@ var denormalizeGroups = function(layers, groups) {
     return {
         flat: normalizedLayers,
         groups: groups.map((group) => assign({}, group, {
-            nodes: group.nodes.map((layerName) => normalizedLayers.filter((layer) => layer.name === layerName)[0])
+            nodes: group.nodes.map((layerId) => normalizedLayers.filter((layer) => layer.id === layerId)[0])
         }))
     };
 };
@@ -148,7 +154,7 @@ module.exports = (actions) => {
             messages: state.locale ? state.locale.messages : null,
             locale: state.locale ? state.locale.current : null,
             locate: state.locate ? state.locate : {state: "DISABLED"},
-            mapInfo: state.mapInfo ? state.mapInfo : {enabled: false, responses: [], requests: {length: 0}},
+            mapInfo: state.mapInfo ? state.mapInfo : {enabled: false, responses: [], requests: {length: 0}, clickPoint: {}, showMarker: false},
             floatingPanel: state.floatingPanel ? state.floatingPanel : {activeKey: ""},
             localeError: state.locale && state.locale.loadingError ? state.locale.loadingError : undefined,
             mousePosition: state.mousePosition ? state.mousePosition.position : null,

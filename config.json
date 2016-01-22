@@ -5,21 +5,25 @@
 		"center": {"x": 10.65, "y": 43.672, "crs": "EPSG:4326"},
 		"zoom":9,
 		"mapOptions":{
-			"maxZoom": 23
+			"maxZoom": 23,
+			"interactions": {
+				"altShiftDragRotate": false,
+				"pinchRotate": false
+			}
 		},
 		"maxExtent": [
 			-20037508.34, -20037508.34,
 			20037508.34, 20037508.34
 		],
 		"layers": [
-			{
-				"type": "osm",
-				"title": "Open Street Map",
-				"name": "mapnik",
-        "source": "osm",
-				"group": "background",
-        "visibility": true
-			},
+		{
+			"type": "osm",
+			"title": "Open Street Map",
+			"name": "mapnik",
+			"source": "osm",
+			"group": "background",
+			"visibility": true
+		},
       {
         "type": "google",
         "title": "Google HYBRID",
@@ -38,126 +42,259 @@
       },
       {
         "type": "bing",
-        "title": "Bing Aerial",
-        "apiKey": "AqTGBsziZHIJYYxgivLBf0hVdrAk9mWO5cQcb8Yux8sW5M8c8opEC2lZqKR1ZZXf",
-        "name": "Aerial",
+        "title": "Bing AerialWithLabels",
+        "apiKey": "",
+        "name": "AerialWithLabels",
         "source": "bing",
         "group": "background",
         "visibility": false
-      },{
+
+      }
+
+
+	  ,{
 				"type": "wms",
-        "url":"http://webgis.acque.net/geoserver/wms",
-        "visibility": false,
-        "opacity": 1,
-				"title": "Siti Acq",
-				"name": "postgis_sw:v_sito_acq_con_infra",
-				"group": "mosaic",
+				"url":"/geoserver/wms",
+				"visibility": false,
+				"opacity": 1,
+				"title": "Particelle",
+				"name": "geoscopio:rt_cat.idcatpart.rt",
+				"group": "Catasto",
 				"format": "image/png8",
+				"featureInfoRegex": "<table[^>]*>([\\s\\S]*)<\\/table>",
 				"params":{
 					"tiled": true
 				}
 			},{
 				"type": "wms",
-        "url":"http://webgis.acque.net/geoserver/wms",
-        "visibility": true,
-        "opacity": 1,
+				"url":"/geoserver/wms",
+				"visibility": false,
+				"opacity": 1,
+				"title": "Fogli",
+				"name": "geoscopio:rt_cat.idcatbdfog.rt",
+				"group": "Catasto",
+				"format": "image/png8",
+				"featureInfoRegex": "<table[^>]*>([\\s\\S]*)<\\/table>",
+				"params":{
+					"tiled": true
+				}
+			},{
+				"type": "wms",
+				"url":"/geoserver/wms",
+				"visibility": false,
+				"opacity": 1,
+				"title": "Prese Enel",
+				"name": "sde_postgis:ext_uten_elet",
+				"group": "Prese Enel",
+				"format": "image/png8",
+				"featureInfoRegex": "<table[^>]*>([\\s\\S]*)<\\/table>",
+				"featureInfoParams":{
+					"buffer" : 10
+				},
+				"params":{
+					"tiled": true
+				}
+			},{
+				"type": "wms",
+				"url":"/geoserver/wms",
+				"visibility": false,
+				"opacity": 1,
+				"title": "Depuratori",
+				"name": "sde_postgis:fgn_trattamento",
+				"group": "FOGNATURA",
+				"style": "fgn_trattamento_acq",
+				"format": "image/png8",
+				"featureInfoRegex": "<table[^>]*>([\\s\\S]*)<\\/table>",
+				"featureInfoParams":{
+					"buffer" : 10
+				},
+				"params":{
+					"tiled": true
+				}
+			},{
+				"type": "wms",
+				"url":"/geoserver/wms",
+				"visibility": false,
+				"opacity": 1,
+				"title": "Sollevamenti",
+				"name": "sde_postgis:fgn_sollevamento",
+				"group": "FOGNATURA",
+				"style": "fgn_sollevamento_acq",
+				"format": "image/png8",
+				"featureInfoRegex": "<table[^>]*>([\\s\\S]*)<\\/table>",
+				"featureInfoParams":{
+					"buffer" : 10
+				},
+				"params":{
+					"tiled": true
+				}
+			},{
+				"type": "wms",
+				"url":"/geoserver/wms",
+				"visibility": false,
+				"opacity": 1,
+				"title": "Rete FGN",
+				"name": "sde_postgis:v_fgn_condotta_rete",
+				"group": "FOGNATURA",
+				"style": "fgn_condotta_acq",
+				"format": "image/png8",
+				"featureInfoRegex": "<table[^>]*>([\\s\\S]*)<\\/table>",
+				"featureInfoParams":{
+					"buffer" : 10
+				},
+				"params":{
+
+					"tiled": true
+				}
+			},{
+				"type": "wms",
+				"url":"/geoserver/wms",
+				"visibility": false,
+				"opacity": 1,
+				"title": "Siti ACQ",
+				"name": "sde_postgis:ext_sito_points",
+				"group": "IMPIANTI ACQ",
+				"style": "ext_sito_points_potabile",
+				"format": "image/png8",
+				"featureInfoRegex": "<table[^>]*>([\\s\\S]*)<\\/table>",
+				"featureInfoParams":{
+					"buffer" : 10
+				},
+				"params":{
+					"tiled": true
+				}
+			},{
+				"type": "wms",
+				"url":"/geoserver/wms",
+				"visibility": false,
+				"opacity": 1,
 				"title": "Depositi",
-				"name": "postgis_sw:ac",
-				"group": "mosaic",
+				"name": "sde_postgis:acq_accumulo",
+				"group": "IMPIANTI ACQ",
+				"style": "acq_accumulo_acq",
 				"format": "image/png8",
+				"featureInfoRegex": "<table[^>]*>([\\s\\S]*)<\\/table>",
+				"featureInfoParams":{
+					"buffer" : 10
+				},
 				"params":{
 					"tiled": true
 				}
 			},{
 				"type": "wms",
-        "url":"http://webgis.acque.net/geoserver/wms",
-        "visibility": true,
-        "opacity": 1,
+				"url":"/geoserver/wms",
+				"visibility": false,
+				"opacity": 1,
 				"title": "Pompaggi",
-				"name": "postgis_sw:pg",
-				"group": "mosaic",
+				"name": "sde_postgis:acq_pompaggio",
+				"group": "IMPIANTI ACQ",
+				"style": "acq_pompaggio_acq",
 				"format": "image/png8",
+				"featureInfoRegex": "<table[^>]*>([\\s\\S]*)<\\/table>",
+				"featureInfoParams":{
+					"buffer" : 10
+				},
 				"params":{
 					"tiled": true
 				}
 			},{
 				"type": "wms",
-        "url":"http://webgis.acque.net/geoserver/wms",
-        "visibility": false,
-        "opacity": 1,
-				"title": "Potabilizzatori",
-				"name": "postgis_sw:pt",
-				"group": "mosaic",
+				"url":"/geoserver/wms",
+				"visibility": false,
+				"opacity": 1,
+				"title": "Potablizzatori",
+				"name": "sde_postgis:acq_potabiliz",
+				"group": "IMPIANTI ACQ",
+				"style": "acq_potabiliz_acq",
 				"format": "image/png8",
+				"featureInfoRegex": "<table[^>]*>([\\s\\S]*)<\\/table>",
+				"featureInfoParams":{
+					"buffer" : 10
+				},
 				"params":{
 					"tiled": true
 				}
 			},{
 				"type": "wms",
-        "url":"http://webgis.acque.net/geoserver/wms",
-        "visibility": false,
-        "opacity": 1,
+				"url":"/geoserver/wms",
+				"visibility": false,
+				"opacity": 1,
 				"title": "Aree di rispetto captazioni",
-				"name": "postgis_sw:v_captazioni_buffer",
-				"group": "mosaic",
+				"name": "sde_postgis:v_acq_captazione_area_rispetto",
+				"group": "CAPTAZIONI",
 				"format": "image/png8",
+				"featureInfoRegex": "<table[^>]*>([\\s\\S]*)<\\/table>",
+				"featureInfoParams":{
+					"buffer" : 10
+				},
 				"params":{
 					"tiled": true
 				}
 			},{
 				"type": "wms",
-        "url":"http://webgis.acque.net/geoserver/wms",
-        "visibility": false,
-        "opacity": 1,
-				"title": "Sorgenti",
-				"name": "postgis_sw:so",
-				"group": "mosaic",
+				"url":"/geoserver/wms",
+				"visibility": false,
+				"opacity": 1,
+				"title": "Captazioni",
+				"name": "sde_postgis:acq_captazione",
+				"group": "CAPTAZIONI",
 				"format": "image/png8",
+				"style": "acq_captazione_acq",
+				"featureInfoRegex": "<table[^>]*>([\\s\\S]*)<\\/table>",
+				"featureInfoParams":{
+					"buffer" : 10
+				},
 				"params":{
 					"tiled": true
 				}
 			},{
 				"type": "wms",
-        "url":"http://webgis.acque.net/geoserver/wms",
-          "visibility": false,
-        "opacity": 1,
-				"title": "Pozzi",
-				"name": "postgis_sw:po",
-				"group": "mosaic",
-				"format": "image/png8"
-			},{
-				"type": "wms",
-        "url":"http://webgis.acque.net/geoserver/wms",
-      	"visibility": false,
-        "opacity": 1,
-				"title": "Contatori",
-				"name": "postgis_sw:contator",
-				"group": "mosaic",
+				"url":"/geoserver/wms",
+				"visibility": false,
+				"opacity": 1,
+				"title": "Manovre",
+				"name": "sde_postgis:acq_org_man",
+				"group": "ACQUEDOTTO",
+				"style": "acq_org_man_acq",
 				"format": "image/png8",
+				"featureInfoRegex": "<table[^>]*>([\\s\\S]*)<\\/table>",
+				"featureInfoParams":{
+					"buffer" : 10
+				},
 				"params":{
 					"tiled": true
 				}
 			},{
 				"type": "wms",
-        "url":"http://webgis.acque.net/geoserver/wms",
-        "visibility": true,
-        "opacity": 1,
-				"title": "Acquedotto",
-				"name": "ACQ_CON_MANOVRE",
-				"group": "mosaic",
+				"url":"/geoserver/wms",
+				"opacity": 1,
+				"title": "Valvole",
+				"name": "sde_postgis:acq_valv_sca_reg",
+				"group": "ACQUEDOTTO",
+				"style": "acq_valv_sca_reg_acq",
+				"visibility": false,
 				"format": "image/png8",
+				"featureInfoRegex": "<table[^>]*>([\\s\\S]*)<\\/table>",
+				"featureInfoParams":{
+					"buffer" : 10
+				},
 				"params":{
 					"tiled": true
 				}
 			},{
 				"type": "wms",
-        "url":"http://webgis.acque.net/geoserver/wms",
-      	"visibility": false,
-        "opacity": 1,
-				"title": "Rete Fgn",
-				"name": "postgis_sw:fgn_con",
-				"group": "mosaic",
+				"url":"/geoserver/wms",
+				"visibility": false,
+				"opacity": 1,
+				"title": "Rete ACQ",
+				"name": "sde_postgis:v_acq_condotta_rete",
+				"group": "ACQUEDOTTO",
 				"format": "image/png8",
+				"style": "acq_condotta_acq",
+				"featureInfoRegex": "<table[^>]*>([\\s\\S]*)<\\/table>",
+				"featureInfoParams":{
+					"buffer" : 10
+				},
 				"params":{
 					"tiled": true
 				}

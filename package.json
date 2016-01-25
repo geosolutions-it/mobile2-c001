@@ -88,7 +88,7 @@
   "scripts": {
     "clean": "rm -Rf ./dist",
     "compile": "npm run clean && mkdirp ./dist && webpack --config prod-webpack.config.js",
-    "start": "webpack-dev-server --progress --colors --port 8081 --host 192.168.1.112 --hot --inline --content-base .",
+    "start": "webpack-dev-server --progress --colors --port 8081 --hot --inline --content-base .",
     "test": "karma start ./karma.conf.single-run.js",
     "continuoustest": "karma start ./karma.conf.continuous-test.js",
     "mvntest": "karma start ./karma.conf.single-run.js --reporters junit,dots,coverage",

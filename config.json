@@ -33,14 +33,6 @@
         "visibility": false
       },
       {
-        "type": "mapquest",
-        "title": "MapQuest OSM",
-        "name": "osm",
-        "source": "mapquest",
-        "group": "background",
-        "visibility": false
-      },
-      {
         "type": "bing",
         "title": "Bing AerialWithLabels",
         "apiKey": "",
